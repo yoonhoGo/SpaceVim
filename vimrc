@@ -25,3 +25,11 @@ if 1
     execute 'source' fnamemodify(expand('<sfile>'), ':h').'/main.vim'
 endif
 " vim:set et sw=2
+set guifont=FiraCode\ Nerd\ Font\ Mono:h14
+set macligatures
+let g:webdevicons_enable_vimfiler = 1
+set encoding=UTF-8
+set noswapfile
+set smartcase
+let g:test#javascript#mocha#file_pattern='\vsrc/.*/spec/.*\.spec\.ts$'
+
