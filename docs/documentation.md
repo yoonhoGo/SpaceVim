@@ -273,9 +273,22 @@ to the `custom_plugins` section:
 
 ```toml
 [[custom_plugins]]
-    repo = "lilydjwg/colorizer"
-    on_cmd = ["ColorHighlight", "ColorToggle"]
+    repo = 'lilydjwg/colorizer'
+    # `on_cmd` option means this plugin will be loaded
+    # only when the specific commands are called.
+    # for example, when `:ColorHighlight` or `:ColorToggle`
+    # commands are called.
+    on_cmd = ['ColorHighlight', 'ColorToggle']
+    # `on_func` option means this plugin will be loaded
+    # only when the specific functions are called.
+    # for example, when `colorizer#ColorToggle()` function is called.
+    on_func = 'colorizer#ColorToggle'
+    # `merged` option is used for merging plugins directory.
+    # When `merged` is `true`, all files in this custom plugin
+    # will be merged into `~/.cache/vimfiles/.cache/init.vim/`
+    # for neovim or `~/.cache/vimfiles/.cache/vimrc/` for vim.
     merged = false
+    # For more options see `:h dein-options`.
 ```
 
 You can also use the url of the repository, for example:
@@ -285,14 +298,6 @@ You can also use the url of the repository, for example:
     repo = "https://gitlab.com/code-stats/code-stats-vim.git"
     merged = false
 ```
-
-`on_cmd` option means this plugin will be loaded only when the following commands are called.
-
-`merged` option is used for merging plugins directory. When `merged` is `true`, all files in
-this custom plugin will be merged into `~/.cache/vimfiles/.cache/init.vim/` for neovim or
-`~/.cache/vimfiles/.cache/vimrc/` for vim.
-
-For more options see `:h dein-options`.
 
 **disable existing plugins**
 
@@ -846,6 +851,13 @@ to your custom configuration file. Here is a picture of this feature:
 
 ![file-tree](https://user-images.githubusercontent.com/13142418/80496111-5065b380-899b-11ea-95c7-02af4d304aaf.png)
 
+There is also an option to configure show/hide the file tree, default to show. To hide the file tree by default, you can use the `enable_vimfiler_welcome` option:
+
+```toml
+[options]
+    enable_vimfiler_welcome = false
+```
+
 There is also an option to configure the side of the file tree, by default it is right. To move the file tree to the left,
 you can use the `filetree_direction` option:
 
@@ -866,7 +878,7 @@ Navigation is centered on the `hjkl` keys with the hope of providing a fast navi
 | `<Down>` / `j`        | select next file or directory                     |
 | `<Up>` / `k`          | select previous file or directory                 |
 | `<Right>` / `l`       | open selected file or expand directory            |
-| `<Enter>`             | open file or switch to directory                     |
+| `<Enter>`             | open file or switch to directory                  |
 | `N`                   | Create new file under cursor                      |
 | `r`                   | Rename the file under cursor                      |
 | `d`                   | Delete the file under cursor                      |
@@ -1176,10 +1188,10 @@ Read `:h registers` for more info about other registers.
 
 | Key          | Descriptions                                 |
 | ------------ | -------------------------------------------- |
-| `<Leader> y` | Copy text to system clipboard                |
+| `<Leader> y` | Copy selected text to system clipboard       |
 | `<Leader> p` | Paste text from system clipboard after here  |
 | `<Leader> P` | Paste text from system clipboard before here |
-| `<Leader> Y` | Copy text to pastebin                        |
+| `<Leader> Y` | Copy selected text to pastebin               |
 
 The `<Leader> Y` key binding will copy selected text to a pastebin server. It requires `curl` in your `$PATH`.
 The default command is:
@@ -1421,8 +1433,8 @@ Files manipulation commands (start with `f`):
 | `SPC f D`    | delete a file and the associated buffer with confirmation               |
 | `SPC f E`    | open a file with elevated privileges (sudo layer) (TODO)                |
 | `SPC f W`    | save a file with elevated privileges (sudo layer)                       |
-| `SPC f f`    | open file                                                               |
-| `SPC f F`    | try to open the file under point                                        |
+| `SPC f f`    | fuzzy find files in buffer directory                                    |
+| `SPC f F`    | fuzzy find cursor file in buffer directory                              |
 | `SPC f o`    | Find current file in file tree                                          |
 | `SPC f R`    | rename the current file(TODO)                                           |
 | `SPC f s`    | save a file                                                             |

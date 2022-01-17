@@ -143,12 +143,16 @@ function! SpaceVim#layers#core#config() abort
   nnoremap <silent> [p P
   nnoremap <silent> ]p p
 
-  " Select last paste
-  nnoremap <silent><expr> gp '`['.strpart(getregtype(), 0, 1).'`]'
-
+  let lnum = expand('<slnum>') + s:lnum - 1
   call SpaceVim#mapping#space#def('nnoremap', ['f', 's'], 'call call('
         \ . string(s:_function('s:save_current_file')) . ', [])',
-        \ 'save-current-file', 1)
+        \ ['save-current-file',
+        \  ['[SPC f s] is to save current file',
+        \   '',
+        \   'Definition: ' . s:filename . ':' . lnum,
+        \  ]
+        \ ]
+        \ , 1)
   call SpaceVim#mapping#space#def('nnoremap', ['f', 'a'], 'call call('
         \ . string(s:_function('s:save_as_new_file')) . ', [])',
         \ 'save-as-new-file', 1)
@@ -232,7 +236,8 @@ function! SpaceVim#layers#core#config() abort
           \ ]
           \ , 1)
   let lnum = expand('<slnum>') + s:lnum - 1
-  call SpaceVim#mapping#space#def('nnoremap', ['h', 'G'], 'call SpaceVim#plugins#helpgrep#help(expand("<cword>"))',
+  call SpaceVim#mapping#space#def('nnoremap', ['h', 'G'],
+        \ 'call SpaceVim#plugins#helpgrep#help(expand("<cword>"))',
         \ ['asynchronous-helpgrep-with-cword',
         \ [
           \ '[SPC h g] is to run helpgrep asynchronously with cword',
@@ -241,7 +246,17 @@ function! SpaceVim#layers#core#config() abort
           \ ]
           \ ]
           \ , 1)
-  call SpaceVim#mapping#space#def('nnoremap', ['b', 'd'], 'call SpaceVim#mapping#close_current_buffer()', 'delete-this-buffer', 1)
+  let lnum = expand('<slnum>') + s:lnum - 1
+  call SpaceVim#mapping#space#def('nnoremap', ['b', 'd'],
+        \ 'call SpaceVim#mapping#close_current_buffer()',
+        \ ['delete-this-buffer',
+        \ [
+          \ '[SPC b d] is to delete current buffer',
+          \ '',
+          \ 'Definition: ' . s:filename . ':' . lnum,
+          \ ]
+          \ ]
+          \ , 1)
   call SpaceVim#mapping#space#def('nnoremap', ['b', 'D'],
         \ 'call SpaceVim#mapping#kill_visible_buffer_choosewin()',
         \ 'delete-the-selected-buffer', 1)
@@ -275,7 +290,6 @@ function! SpaceVim#layers#core#config() abort
   call SpaceVim#mapping#space#def('nnoremap', ['f', 'D'], 'call call('
         \ . string(s:_function('s:delete_current_buffer_file')) . ', [])',
         \ 'delete-current-buffer-file', 1)
-  call SpaceVim#mapping#space#def('nnoremap', ['f', 'F'], 'normal! gf', 'open-cursor-file', 1)
   call SpaceVim#mapping#space#def('nnoremap', ['f', '/'], 'call SpaceVim#plugins#find#open()', 'find-files', 1)
   if s:SYS.isWindows
     call SpaceVim#mapping#space#def('nnoremap', ['f', 'd'], 'call call('
@@ -422,28 +436,23 @@ function! s:number_transient_state(n) abort
   let state = SpaceVim#api#import('transient_state') 
   call state.set_title('Number Transient State')
   call state.defind_keys(
-        \ {
-          \ 'layout' : 'vertical split',
-          \ 'left' : [
-            \ {
-              \ 'key' : ['+','='],
-              \ 'desc' : 'increase number',
-              \ 'func' : '',
-              \ 'cmd' : "normal! \<c-a>",
-              \ 'exit' : 0,
-              \ },
-              \ ],
-              \ 'right' : [
-                \ {
-                  \ 'key' : '-',
-                  \ 'desc' : 'decrease number',
-                  \ 'func' : '',
-                  \ 'cmd' : "normal! \<c-x>",
-                  \ 'exit' : 0,
-                  \ },
-                  \ ],
-                  \ }
-                  \ )
+        \ {'layout' : 'vertical split',
+        \  'left' : [{'key' : ['+','='],
+        \             'desc' : 'increase number',
+        \             'func' : '',
+        \             'cmd' : "normal! \<c-a>",
+        \             'exit' : 0,
+        \            },
+        \           ],
+        \ 'right' : [{'key' : '-',
+        \             'desc' : 'decrease number',
+        \             'func' : '',
+        \             'cmd' : "normal! \<c-x>",
+        \             'exit' : 0,
+        \            },
+        \           ],
+        \ }
+        \ )
   call state.open()
 endfunction
 
@@ -1075,3 +1084,5 @@ function! s:close_current_tab() abort
     tabclose!
   endif
 endfunction
+
+" vim:set et sw=2 cc=80:

@@ -501,6 +501,8 @@ function! SpaceVim#layers#core#statusline#get(...) abort
     return '%#SpaceVim_statusline_a# Git log popup %#SpaceVim_statusline_a_SpaceVim_statusline_b#' . s:lsep
   elseif &filetype ==# 'respones.idris'
     return '%#SpaceVim_statusline_a# Idris Response %#SpaceVim_statusline_a_SpaceVim_statusline_b#' . s:lsep
+  elseif &filetype ==# 'markdown.lspdoc'
+    return '%#SpaceVim_statusline_a# LSP hover info %#SpaceVim_statusline_a_SpaceVim_statusline_b#' . s:lsep
   elseif &filetype ==# 'SpaceVimWinDiskManager'
     return '%#SpaceVim_statusline_a# WinDisk %#SpaceVim_statusline_a_SpaceVim_statusline_b#' . s:lsep
   elseif &filetype ==# 'SpaceVimTodoManager'
@@ -541,6 +543,10 @@ function! SpaceVim#layers#core#statusline#get(...) abort
           \ . '%#SpaceVim_statusline_b# %{SpaceVim#plugins#flygrep#lineNr()} %#SpaceVim_statusline_b_SpaceVim_statusline_z#' . s:lsep . ' '
   elseif &filetype ==# 'TransientState'
     return '%#SpaceVim_statusline_a# Transient State %#SpaceVim_statusline_a_SpaceVim_statusline_b#'
+  elseif &filetype ==# 'SpaceVimLog'
+    return '%#SpaceVim_statusline_a# SpaceVim Runtime log %#SpaceVim_statusline_a_SpaceVim_statusline_b#'
+  elseif &filetype ==# 'SpaceVimTomlViewer'
+    return '%#SpaceVim_statusline_a# Toml Json Viewer %#SpaceVim_statusline_a_SpaceVim_statusline_b#'
   elseif &filetype ==# 'vimcalc'
     return '%#SpaceVim_statusline_a#' . s:winnr() . ' VimCalc %#SpaceVim_statusline_a_SpaceVim_statusline_b#'
   elseif &filetype ==# 'HelpDescribe'
@@ -766,8 +772,8 @@ function! SpaceVim#layers#core#statusline#config() abort
         \ 'main': 'SpaceVim#layers#core#statusline#ctrlp',
         \ 'prog': 'SpaceVim#layers#core#statusline#ctrlp_status',
         \ }
-  if filereadable(expand('~/.cache/SpaceVim/major_mode.json'))
-    let conf = s:JSON.json_decode(join(readfile(expand('~/.cache/SpaceVim/major_mode.json'), ''), ''))
+  if filereadable(expand(g:spacevim_data_dir . 'SpaceVim/major_mode.json'))
+    let conf = s:JSON.json_decode(join(readfile(expand(g:spacevim_data_dir . 'SpaceVim/major_mode.json'), ''), ''))
     for key in keys(conf)
       if conf[key]
         " this function should be called silent.
@@ -782,7 +788,7 @@ function! s:update_conf() abort
   for key in keys(s:modes)
     call extend(conf, {key : (index(s:loaded_modes, key) > -1 ? 1 : 0)})
   endfor
-  call writefile([s:JSON.json_encode(conf)], expand('~/.cache/SpaceVim/major_mode.json'))
+  call writefile([s:JSON.json_encode(conf)], expand(g:spacevim_data_dir . 'SpaceVim/major_mode.json'))
 endfunction
 
 " Arguments:

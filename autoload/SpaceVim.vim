@@ -11,7 +11,7 @@ scriptencoding utf-8
 " @section Introduction, intro
 " @stylized spacevim
 " @library
-" @order intro options config layers usage api dev faq changelog
+" @order intro options config functions layers usage api dev faq changelog
 " SpaceVim is a bundle of custom settings and plugins with a modular
 " configuration for Vim. It was inspired by Spacemacs.
 "
@@ -36,8 +36,14 @@ scriptencoding utf-8
 ""
 " @section Configuration, config
 " If you still want to use `~/.SpaceVim.d/init.vim` as configuration file,
-" please take a look at the following options.
-"
+" please take a look at the following options add @section(functions)
+
+
+""
+" @section Public functions, functions
+" All of these functions can be used in `~/.SpaceVim.d/init.vim` and bootstrap
+" functions.
+
 
 let s:SYSTEM = SpaceVim#api#import('system')
 
@@ -45,7 +51,7 @@ let s:SYSTEM = SpaceVim#api#import('system')
 
 ""
 " Version of SpaceVim , this value can not be changed.
-let g:spacevim_version = '1.8.0'
+let g:spacevim_version = '1.9.0'
 lockvar g:spacevim_version
 
 ""
@@ -110,6 +116,15 @@ let g:spacevim_enable_bepo_layout  = 0
 " <
 let g:spacevim_max_column              = 120
 
+""
+" @section windisk_encoding, options-windisk_encoding
+" @parentsection options
+" Setting the encoding of windisk info. by default it is `cp936`.
+" >
+"   windisk_encoding = 'cp936'
+" <
+
+let g:spacevim_windisk_encoding = 'cp936'
 
 ""
 " @section default_custom_leader, options-default_custom_leader
@@ -1016,10 +1031,21 @@ let g:spacevim_disabled_plugins        = []
 ""
 " @section custom_plugins, usage-custom_plugins
 " @parentsection usage
-" Add custom plugins.
+" If you want to add custom plugin, use `custom_plugins` section. For example:
+" if you want to add https://github.com/vimwiki/vimwiki, add following code
+" into your configuration file.
 " >
 "   [[custom_plugins]]
 "     repo = 'vimwiki/vimwiki'
+"     merged = false
+" <
+" Use one custom_plugins for each plugin, example:
+" >
+"   [[custom_plugins]]
+"     repo = 'vimwiki/vimwiki'
+"     merged = false
+"   [[custom_plugins]]
+"     repo = 'wsdjeg/vim-j'
 "     merged = false
 " <
 
@@ -1243,7 +1269,7 @@ let g:_spacevim_mappings = {}
 let g:_spacevim_mappings_space_custom = []
 let g:_spacevim_mappings_space_custom_group_name = []
 let g:_spacevim_mappings_language_specified_space_custom = {}
-let g:_spacevim_mappings_language_specified_space_custom_group_name = {}
+let g:_spacevim_mappings_lang_group_name = {}
 let g:_spacevim_neobundle_installed     = 0
 let g:_spacevim_dein_installed          = 0
 let g:_spacevim_vim_plug_installed      = 0
@@ -1364,7 +1390,6 @@ function! SpaceVim#end() abort
   elseif g:spacevim_vim_help_language ==# 'ja'
     let &helplang = 'jp'
   endif
-  ""
   " generate tags for SpaceVim
   let help = fnamemodify(g:_spacevim_root_dir, ':p:h') . '/doc'
   try
@@ -1372,8 +1397,6 @@ function! SpaceVim#end() abort
   catch
     call SpaceVim#logger#warn('Failed to generate helptags for SpaceVim')
   endtry
-
-  ""
   " set language
   if !empty(g:spacevim_language)
     silent exec 'lan ' . g:spacevim_language
@@ -1432,6 +1455,9 @@ function! SpaceVim#end() abort
       set guicolors
     endif
   endif
+
+  call SpaceVim#autocmds#init()
+
   if g:spacevim_colorscheme !=# '' "{{{
     try
       exec 'set background=' . g:spacevim_colorscheme_bg
@@ -1452,10 +1478,6 @@ function! SpaceVim#end() abort
       let &guifont = g:spacevim_guifont
     endif
   endif
-
-
-
-  call SpaceVim#autocmds#init()
 
   if !has('nvim-0.2.0') && !has('nvim')
     " In old version of neovim, &guicursor do not support cursor shape
@@ -1481,23 +1503,29 @@ endfunction
 " return [status, dir]
 " status: 0 : no argv
 "         1 : dir
-"         2 : filename
+"         2 : default arguments
 function! s:parser_argv() abort
-  if !argc()
+  if  !exists('v:argv')
+        \ || (len(v:argv) >=# 3 && index(v:argv, '--embed') ==# -1)
+    " or do not support v:argv
+    return [2, get(v:, 'argv', ['failed to get v:argv'])]
+  elseif len(v:argv) ==# 1 || index(v:argv, '--embed') !=# -1
+    " if there is no arguments
+    " or use embed nvim
     return [0]
-  elseif argv(0) =~# '/$'
-    let f = fnamemodify(expand(argv(0)), ':p')
+  elseif v:argv[1] =~# '/$'
+    let f = fnamemodify(expand(v:argv[1]), ':p')
     if isdirectory(f)
       return [1, f]
     else
       return [1, getcwd()]
     endif
-  elseif argv(0) ==# '.'
+  elseif v:argv[1] ==# '.'
     return [1, getcwd()]
-  elseif isdirectory(expand(argv(0)))
-    return [1, fnamemodify(expand(argv(0)), ':p')]
+  elseif isdirectory(expand(v:argv[1]))
+    return [1, fnamemodify(expand(v:argv[1]), ':p')]
   else
-    return [2, argv()]
+    return [2, get(v:, 'argv', ['failed to get v:argv'])]
   endif
 endfunction
 
@@ -1528,6 +1556,8 @@ function! SpaceVim#begin() abort
     endif
   catch /^Vim\%((\a\+)\)\=:E197/
     call SpaceVim#logger#error('Can not set language to en_US.utf8')
+  catch /^Vim\%((\a\+)\)\=:E319/
+    call SpaceVim#logger#error('Can not set language to en_US.utf8, language not implemented in this Vim build')
   endtry
 
   " try to set encoding to utf-8
@@ -1617,6 +1647,82 @@ endfunction
 "   General guide for using SpaceVim. Including layer configuration, bootstrap
 "   function.
 
+""
+" @section windows-and-tabs, usage-windows-and-tabs
+" @parentsection usage
+" @subsection Windows related key bindings
+" Window manager key bindings can only be used in normal mode.
+" The default leader `[WIN]` is `s`, you can change it via `windows_leader`
+" option:
+" >
+"   [options]
+"     windows_leader = "s"
+" <
+" The following key bindings can be used to manager vim windows and tabs.
+" >
+"     Key Bindings | Descriptions
+"     ------------ | --------------------------------------------------
+"     q            | Smart buffer close
+"     WIN v        | :split
+"     WIN V        | Split with previous buffer
+"     WIN g        | :vsplit
+"     WIN G        | Vertically split with previous buffer
+"     WIN t        | Open new tab (:tabnew)
+"     WIN o        | Close other windows (:only)
+"     WIN x        | Remove buffer, leave blank window
+"     WIN q        | Remove current buffer
+"     WIN Q        | Close current buffer (:close)
+"     Shift-Tab    | Switch to alternate window (switch back and forth)
+" <
+
+""
+" @section search-and-replace, usage-search-and-replace
+" @parentsection usage
+" This section document how to find and replace text in SpaceVim.
+"
+" @subsection Searching with  an external tool
+"
+" SpaceVim can be interfaced with different searching tools like:
+" 1. rg - ripgrep
+" 2. ag - the silver searcher
+" 3. pt - the platinum searcher
+" 4. ack
+" 5. grep
+" The search commands in SpaceVim are organized under the `SPC s` prefix
+" with the next key being the tool to use and the last key is the scope.
+" For instance, `SPC s a b` will search in all opened buffers using `ag`.
+" 
+" If the `<scope>` is uppercase then the current word under the cursor
+" is used as default input for the search.
+" For instance, `SPC s a B` will search for the word under the cursor.
+" 
+" If the tool key is omitted then a default tool will be automatically
+" selected for the search. This tool corresponds to the first tool found
+" on the system from the list `search_tools`, the default order is
+" `['rg', 'ag', 'pt', 'ack', 'grep', 'findstr', 'git']`.
+" For instance `SPC s b` will search in the opened buffers using
+" `pt` if `rg` and `ag` have not been found on the system.
+" 
+" The tool keys are:
+" >
+"     Tool     | Key
+"     ---------|-----
+"     ag       | a
+"     grep     | g
+"     git grep | G
+"     ack      | k
+"     rg       | r
+"     pt       | t
+" <
+" The available scopes and corresponding keys are:
+" >
+"     Scope                      | Key
+"     ---------------------------|-----
+"     opened buffers             | b
+"     buffer directory           | d
+"     files in a given directory | f
+"     current project            | p
+" <
 
 ""
 " @section buffers-and-files, usage-buffers-and-files
@@ -1631,6 +1737,25 @@ endfunction
 "   SPC b d	      kill the current buffer (does not delete the visited file)
 "   SPC u SPC b d	kill the current buffer and window (does not delete the visited file) (TODO)
 "   SPC b D	      kill a visible buffer using vim-choosewin
+" <
+
+
+""
+" @section command-line-mode, usage-command-line-mode
+" @parentsection usage
+" After pressing `:`, you can switch to command line mode, here is a list
+" of key bindings can be used in command line mode:
+" >
+"   Key bindings    Descriptions
+"   Ctrl-a          move cursor to beginning
+"   Ctrl-b          Move cursor backward in command line
+"   Ctrl-f          Move cursor forward in command line
+"   Ctrl-w          delete a whole word
+"   Ctrl-u          remove all text before cursor
+"   Ctrl-k          remove all text after cursor
+"   Ctrl-c/Esc      cancel command line mode
+"   Tab             next item in popup menu
+"   Shift-Tab       previous item in popup menu
 " <
 
 ""
@@ -1759,11 +1884,19 @@ endfunction
 
 ""
 " @section Changelog, changelog
-" Following HEAD: changes in master branch since last release v1.7.0
+" Following HEAD: changes in master branch since last release v1.9.0
 "
 " https://github.com/SpaceVim/SpaceVim/wiki/Following-HEAD
 "
-" 2021-06-16: v1.4.0
+" 2021-06-16: v1.9.0
+"
+" https://spacevim.org/SpaceVim-release-v1.9.0/
+"
+" 2021-06-16: v1.8.0
+"
+" https://spacevim.org/SpaceVim-release-v1.8.0/
+"
+" 2021-06-16: v1.7.0
 "
 " https://spacevim.org/SpaceVim-release-v1.7.0/
 "

@@ -37,7 +37,7 @@ By default SpaceVim enables these layers:
 - `core#tabline`
 
 To enable a specific layer you need to edit SpaceVim's custom configuration files.
-The key binding for opening the configuration files.s `SPC f v d`.
+The key binding for opening the configuration files is `SPC f v d`.
 
 The following example shows how to load `shell` layer with some specified options:
 
@@ -79,7 +79,7 @@ Some layers are enabled by default. The following example shows how to disable `
 | [ctrlp](ctrlp/)                                       | This layers provide a heavily customized ctrlp centric work-flow                                                                                                    |
 | [ctrlspace](ctrlspace/)                               | This layer provides a customized CtrlSpace centric workflow                                                                                                         |
 | [debug](debug/)                                       | This layer provides debug workflow support in SpaceVim                                                                                                              |
-| [default](default/)                                   | SpaceVim's default layer contains no plugins, but It provides some better default config for SpaceVim.                                                              |
+| [default](default/)                                   | SpaceVim's default layer contains no plugins, but it provides some better default config for SpaceVim.                                                              |
 | [denite](denite/)                                     | This layers provide's a heavily customized Denite centric workflow                                                                                                  |
 | [edit](edit/)                                         | Improve code edit experience in SpaceVim, provides more text objects.                                                                                               |
 | [floobits](floobits/)                                 | This layer adds support for the peer programming tool floobits to SpaceVim.                                                                                         |
@@ -98,7 +98,7 @@ Some layers are enabled by default. The following example shows how to disable `
 | [lang#autohotkey](lang/autohotkey/)                   | This layer adds AutohotKey language support to SpaceVim.                                                                                                            |
 | [lang#batch](lang/batch/)                             | This layer is for DOS batch file development, provides syntax highlighting, code runner and repl support for batch files.                                           |
 | [lang#c](lang/c/)                                     | C/C++/Object-C language support for SpaceVim, including code completion, jump to definition, and quick runner.                                                      |
-| [lang#chapel](lang/chapel/)                           | This layer is for chapel development. provides syntax checking, code runner and repl support for chapel files.                                                      |
+| [lang#chapel](lang/chapel/)                           | This layer is for chapel development, provides syntax checking, code runner and repl support for chapel files.                                                      |
 | [lang#clojure](lang/clojure/)                         | This layer is for Clojure development, provides autocompletion, syntax checking, code format for Clojure files.                                                     |
 | [lang#coffeescript](lang/coffeescript/)               | This layer is for CoffeeScript development, provides autocompletion, syntax checking, code format for CoffeeScript files.                                           |
 | [lang#crystal](lang/crystal/)                         | This layer is for crystal development, provides syntax checking, code runner and repl support for crystal files.                                                    |
@@ -189,6 +189,7 @@ Some layers are enabled by default. The following example shows how to disable `
 | [language-server-protocol](language-server-protocol/) | This layers provides language server protocol for vim and neovim                                                                                                    |
 | [leaderf](leaderf/)                                   | This layer provides a heavily customized LeaderF centric workflow                                                                                                   |
 | [shell](shell/)                                       | This layer provides shell support in SpaceVim                                                                                                                       |
+| [ssh](ssh/)                                           | This layer provides ssh support in SpaceVim                                                                                                                         |
 | [sudo](sudo/)                                         | sudo layer provides the ability to read and write files with elevated privileges in SpaceVim                                                                        |
 | [test](test/)                                         | This layer allows to run tests directly in SpaceVim                                                                                                                 |
 | [tmux](tmux/)                                         | This layers adds extensive support for tmux                                                                                                                         |
@@ -196,6 +197,7 @@ Some layers are enabled by default. The following example shows how to disable `
 | [tools#mpv](tools/mpv/)                               | This layer provides mpv integration for SpaceVim                                                                                                                    |
 | [tools#zeal](tools/zeal/)                             | This layer provides Zeal integration for SpaceVim                                                                                                                   |
 | [tools](tools/)                                       | This layer provides some tools for vim                                                                                                                              |
+| [treesitter](treesitter/)                             | This layers adds extensive support for treesitter                                                                                                                   |
 | [ui](ui/)                                             | Awesome UI layer for SpaceVim, provide IDE-like UI for neovim and vim in both TUI and GUI                                                                           |
 | [unite](unite/)                                       | This layer provides a heavily customized Unite centric workflow                                                                                                     |
 | [VersionControl](VersionControl/)                     | This layer provides general version control features for SpaceVim. It should work with all VC backends such as Git, Mercurial, Bazaar, SVN, etc                     |
